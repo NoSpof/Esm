@@ -1,0 +1,20 @@
+image: "ghcr.io/nospof/esm:0.1"
+name: "esm"
+resources:
+  limits:
+    cpu: 2
+    memory: "2Gi"
+  requests:
+    cpu: 1
+    memory: "1Gi"
+esm:
+  source:
+    srv: "https://es01.default.svc.cluster.local:9200"
+    auth: "elastic:P@ssword"
+  destination:
+    srv: "https://es02.default.svc.cluster.local:9200"
+    auth: "elastic:P@ssw0rd"
+batch:
+  - "index01" 
+  - "index02"
+  - "index03"
