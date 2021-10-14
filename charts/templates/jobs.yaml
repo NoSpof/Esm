@@ -1,0 +1,25 @@
+{{- $image := .Values.image }}
+{{- $resources := .Values.resources }}
+{{- $name := .Values.name}}
+{{- $confesm := .Values.esm }}
+{{- range $index, $esmJobs := .Values.batch }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata: 
+  name: {{ $name }}{{ $index }}
+spec:
+  backoffLimit: 4
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: {{ $name }}{{ $index }}
+        image: "{{ $image }}"
+        imagePullPolicy: IfNotPresent
+        command: ["./esm"]
+        args: ["-s",{{ $confesm.source.srv | quote }}, "-m", {{ $confesm.source.auth| quote }},"-n", {{ $confesm.destination.auth| quote }},"-d", {{ $confesm.destination.srv | quote }},"-x", {{ $esmJobs| quote}},"-w","4","--sliced_scroll_size=60","-b","5","--buffer_count=2000000"]
+        resources:
+{{ toYaml $resources | indent 10 }}
+---
+{{- end }}
